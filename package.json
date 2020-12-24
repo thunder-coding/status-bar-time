@@ -4,6 +4,14 @@
     "description": "",
     "publisher": "YakshBariya",
     "version": "0.0.1",
+    "repository": {
+        "type": "git",
+        "url": "https://www.github.com/thunder-coding/status-bar-time.git"
+    },
+    "bugs": {
+        "email": "yakshbari4@gmail.com",
+        "url": "https://github.com/thunder-coding/status-bar-time/issues"
+    },
     "engines": {
         "vscode": "^1.52.0"
     },
@@ -62,4 +70,8 @@
         "webpack": "^5.10.0",
         "webpack-cli": "^4.2.0"
     }
+}
+"webpack": "^5.10.0",
+"webpack-cli": "^4.2.0"
+}
 }
