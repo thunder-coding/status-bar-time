@@ -1,27 +1,58 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+let statusBarItem: vscode.StatusBarItem;
+let x: number = 0;
+const months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "status-bar-time" is now active!');
+export function activate({ subscriptions }: vscode.ExtensionContext) {
+	console.log(
+		'Congratulations, your extension "status-bar-time" is now active!'
+	);
+	/**
+	 * ```
+	 * 'status-bar-time.toggle-status-bar-visibility'
+	 * ```
+	 */
+	let commandId: string = "status-bar-time.toggle-status-bar-visibility";
+	subscriptions.push(
+		vscode.commands.registerCommand(commandId, () => {
+			let previousConfiguration: boolean = vscode.workspace.getConfiguration().get("status-bar-time.visible") as unknown as boolean;
+			vscode.workspace.getConfiguration("settings").update("status-bar-time.visible", previousConfiguration ? false : true, true);
+		}));
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('status-bar-time.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
+	statusBarItem = vscode.window.createStatusBarItem(
+		vscode.StatusBarAlignment.Right,
+		-1000
+	);
+	statusBarItem.command = commandId;
+	statusBarItem.text = "Hello";
+	subscriptions.push(statusBarItem);
 
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from Status Bar Time!');
-	});
-
-	context.subscriptions.push(disposable);
+	updateStatusBarTime();
+	setInterval(updateStatusBarTime, 1000);
 }
 
-// this method is called when your extension is deactivated
+function updateStatusBarTime(): void {
+    let timeString: string = "";
+    let date: Date;
+
+    date = new Date();
+
+	if (!vscode.workspace.getConfiguration().get("status-bar-time.visible") as boolean) {
+		statusBarItem.hide();
+		return;
+	}
+    let dateFormat: string = vscode.workspace.getConfiguration().get("status-bar-time.dateFormat") as string;
+
+    timeString = dateFormat;
+    timeString = timeString.replace(/month/gi,	months[date.getMonth()]);
+    timeString = timeString.replace(/date/gi,	date.getDate() as unknown as string);
+    timeString = timeString.replace(/year/gi,	date.getFullYear() as unknown as string);
+    timeString = timeString.replace(/hour/gi,	date.getHours() as unknown as string);
+    timeString = timeString.replace(/minute/gi,	date.getMinutes() as unknown as string);
+    timeString = timeString.replace(/second/gi, date.getSeconds() as unknown as string);
+    statusBarItem.text = timeString;
+    statusBarItem.show();
+}
+
 export function deactivate() {}
