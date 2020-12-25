@@ -1,12 +1,11 @@
 name: Node.js CI
 
-on:
-  push:
-    types: [labeled]
-    paths:
-      - '**/*.js'
-      - '**/*.ts'
-      - '**/*.yml'
+on: [push]
+  types: [labeled]
+  paths:
+    - '**/*.js'
+    - '**/*.ts'
+    - '**/*.yml'
 
 jobs:
   build:
